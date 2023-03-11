@@ -1,19 +1,21 @@
 const inquirer = require("inquirer")
 const mysql = require('mysql2');
 const cTable = require('console.table');
-const db = require('.')
+const db = require(".")
 //all the packages required are above!
 
 // create the connection to database
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
+
     password: 'Mb0217nt!',
     database: 'employeetracker_db'
   });
   //Welcome/entry screen with the first set of questions.
-  function welcomePrompt(){
-    inquirer.prompt({
+  function welcomePrompt() {
+    inquirer.prompt([
+        {
       type: 'list',
       message: 'Welcome to the Employee tracker! Please choose a following option.',
       name:'welcome',
@@ -25,16 +27,40 @@ const connection = mysql.createConnection({
       'Add a role',
       'Add an employee',
       'Update an employee role',
-      'Nothing']}
-)};
+      'nothing']
+        }
+                  ])
+      .then((choice) => {
+        switch(choice.welcome) {
+            case 'View all departments':
+              viewDepartments();
+                break;
+            case 'View all roles':
+              viewRoles();
+                break;
+            case 'View all employees':
+              viewEmployees();
+                break;
+            case 'Add a department':
+                break;
+            case 'Add a role':
+                break;
+            case 'Add an employee':
+                break;
+            case 'Update and employee role':
+                break;
+            case 'nothing':
+                console.log('Thanks for using the employee tracker.');;
+        }})
+};
 
 
   function addDepartment(){
-    inquirer.prompt([{
+    inquirer.prompt({
       type: 'input',
       message: 'What is the name of the department you would like to add?',
       name: 'department'
-  }])};
+  })};
 
   function addRole(){
     inquirer.prompt(
@@ -83,3 +109,27 @@ const connection = mysql.createConnection({
       message: 'Whose role would you like to update?',
       name: 'updateRole'
   })};
+welcomePrompt();
+function viewDepartments(){
+  connection.query('SELECT * FROM department', function (err, results) {
+    if (err)
+    throw err;
+    console.log('|-_-_-_-_-_-_-_-_-_-|')
+    console.table(results)})
+            welcomePrompt();}
+
+            function viewEmployees(){
+  connection.query('SELECT * FROM employee', function (err, results) {
+    if (err)
+    throw err;
+    console.log('|-_-_-_-_-_-_-_-_-_-|')
+    console.table(results)})
+            welcomePrompt();}
+
+function viewRoles(){
+  connection.query('SELECT * FROM role', function (err, results) {
+    if (err)
+    throw err;
+    console.log('|-_-_-_-_-_-_-_-_-_-|')
+    console.table(results)})
+            welcomePrompt();}
