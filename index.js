@@ -30,6 +30,9 @@ const connection = mysql.createConnection({
       'nothing']
         }
                   ])
+
+      //I thought a switch/case statement worked best to determine which function occurs
+      //depending on the choice the user picks on the welcome prompt
       .then((choice) => {
         switch(choice.welcome) {
             case 'View all departments':
@@ -42,6 +45,7 @@ const connection = mysql.createConnection({
               viewEmployees();
                 break;
             case 'Add a department':
+              addDepartment();
                 break;
             case 'Add a role':
                 break;
@@ -60,13 +64,19 @@ const connection = mysql.createConnection({
       type: 'input',
       message: 'What is the name of the department you would like to add?',
       name: 'department'
-  })};
+
+//using DB queries to insert data into the tables
+//for some reason the template literal only works when using backticks, not quotes or single quotes
+  }).then((choice) => {(connection.query(`INSERT INTO department (name) VALUES (${choice.department});`,err))
+  console.log("The department has been added!")
+  welcomePrompt();
+})}
 
   function addRole(){
     inquirer.prompt(
       {
       type: 'input',
-      message: 'What is the name of the role that you would like to add?',
+      message: 'What is the title of the role that you would like to add?',
       name: 'role'
        },
        {
@@ -78,19 +88,22 @@ const connection = mysql.createConnection({
       type: 'input',
       message: 'Which department is this role employed in?',
       name: 'roleDepartment'
-    }
-  )};
+    })
+    .then((choice) => {(connection.query(`INSERT INTO role (title, salary, department_id) VALUES (${choice.role}, ${choice.roleSalary}, ${choice.roleDepartment};`))
+    console.log("The role has been added!")
+    welcomePrompt();
+  })};
 
   function addEmployee() {
   inquirer.prompt({
-      type: 'input',
+      type: 'list',
       message: 'What is the first name of the employee?',
-      name: 'firstname'
+      choices: 'firstname'
   },
   {
-      type: 'input',
+      type: 'list',
       message: 'What is the last name of the employee?',
-      name: 'lastname'
+      choices: 'lastname'
   },
   {
       type: 'input',
@@ -101,7 +114,11 @@ const connection = mysql.createConnection({
       type: 'input',
       message: 'Who is the manager of the employee?',
       name: 'employeeManager'
-  })};
+  })
+  .then((choice) => {(connection.query(`INSERT INTO employee (first_name, last_name, department_id) VALUES (${choice.firstname}, ${choice.lastname}, ${choice.role}, ${choice.manager};`))
+  console.log("The employee has been added!")
+  welcomePrompt();
+})};
 
   function updateRole(){
   inquirer.prompt({
