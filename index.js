@@ -114,7 +114,7 @@ const connection = mysql.createConnection({
       message: 'Who is the manager of the employee?',
       name: 'employeeManager'
   })
-  .then((choice) => {(connection.query(`INSERT INTO employee (first_name, last_name, department_id) VALUES (${choice.firstname}, ${choice.lastname}, ${choice.role}, ${choice.manager};`))
+  .then((choice) => {(connection.query(`INSERT INTO employee (first_name, last_name, department_id) VALUES ('${choice.firstname}, ${choice.lastname}, ${choice.role}, ${choice.manager}';`))
   console.log("The employee has been added!")
   welcomePrompt();
 })};
@@ -127,7 +127,7 @@ const connection = mysql.createConnection({
   })};
 welcomePrompt();
 function viewDepartments(){
-  connection.query('SELECT * FROM department', function (err, results) {
+  connection.query('SELECT * FROM department', (err, results) => {
     if (err)
     throw err;
     console.log('|-_-_-_-_-_-_-_-_-_-|')
@@ -135,7 +135,7 @@ function viewDepartments(){
             welcomePrompt();}
 
             function viewEmployees(){
-  connection.query('SELECT * FROM employee', function (err, results) {
+  connection.query('SELECT * FROM employee', (err, results) => {
     if (err)
     throw err;
     console.log('|-_-_-_-_-_-_-_-_-_-|')
@@ -143,7 +143,7 @@ function viewDepartments(){
             welcomePrompt();}
 
 function viewRoles(){
-  connection.query('SELECT * FROM role', function (err, results) {
+  connection.query('SELECT * FROM role', (err, results) => {
     if (err)
     throw err;
     console.log('|-_-_-_-_-_-_-_-_-_-|')
