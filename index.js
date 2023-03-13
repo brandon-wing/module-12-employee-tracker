@@ -1,7 +1,6 @@
 const inquirer = require("inquirer")
 const mysql = require('mysql2');
 const cTable = require('console.table');
-const db = require(".")
 //all the packages required are above!
 
 // create the connection to database
@@ -64,10 +63,10 @@ const connection = mysql.createConnection({
       type: 'input',
       message: 'What is the name of the department you would like to add?',
       name: 'department'
-
+    })
 //using DB queries to insert data into the tables
 //for some reason the template literal only works when using backticks, not quotes or single quotes
-  }).then((choice) => {(connection.query(`INSERT INTO department (name) VALUES (${choice.department});`,err))
+.then((choice) => {(connection.query(`INSERT INTO department (name) VALUES ('${choice.department}');`))
   console.log("The department has been added!")
   welcomePrompt();
 })}
@@ -85,11 +84,11 @@ const connection = mysql.createConnection({
       name: 'roleSalary'
        },
        {
-      type: 'input',
+      type: 'list',
       message: 'Which department is this role employed in?',
       name: 'roleDepartment'
     })
-    .then((choice) => {(connection.query(`INSERT INTO role (title, salary, department_id) VALUES (${choice.role}, ${choice.roleSalary}, ${choice.roleDepartment};`))
+    .then((choice) => {(connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${choice.role}, ${choice.roleSalary}, ${choice.roleDepartment}';`))
     console.log("The role has been added!")
     welcomePrompt();
   })};
