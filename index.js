@@ -126,7 +126,6 @@ connection.query('SELECT id, name FROM department', (err, results) => {
 
     connection.query('SELECT first_name, last_name, id FROM employee', (err, results) => {
       if (err) throw err;
-      console.log(results)
       const managerChoices = results.map(resultsTwo => ({
         name: resultsTwo.first_name.concat(resultsTwo.last_name),
         value: resultsTwo.id
