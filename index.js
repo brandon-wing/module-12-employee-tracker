@@ -52,7 +52,8 @@ const connection = mysql.createConnection({
             case 'Add an employee':
               addEmployee();
                 break;
-            case 'Update and employee role':
+            case 'Update an employee role':
+              updateRole();
                 break;
             case 'nothing':
                 console.log('Thanks for using the employee tracker.');;
@@ -107,7 +108,7 @@ connection.query('SELECT id, name FROM department', (err, results) => {
     .then((choice) => {
       console.log("Answer: ", choice)
       connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${choice.role}', '${choice.roleSalary}', '${choice.roleDepartment}');`)
-      console.log("The role has been added!")
+      console.log("Role has been added to the Database!")
       welcomePrompt();
   });
 });
@@ -155,7 +156,7 @@ connection.query('SELECT id, name FROM department', (err, results) => {
   }
 ])
   .then((choice) => {connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${choice.firstName}', '${choice.lastName}', '${choice.employeeRole}', '${choice.employeeManager}')`);
-  console.log("The employee has been added!")
+  console.log("The employee has been added to the Database!")
   welcomePrompt();
 })
 })
@@ -163,14 +164,47 @@ connection.query('SELECT id, name FROM department', (err, results) => {
 };
 
 
-  function updateRole(){
-  inquirer.prompt({
-      type: 'list',
-      message: 'Whose role would you like to update?',
-      name: 'updateRole'
-  })};
-welcomePrompt();
+function updateRole(){
 
+connection.query('SELECT first_name, last_name, id FROM employee', (err, results) => {
+if (err) throw err;
+
+
+const empList = results.map(results => ({
+  name: results.first_name.concat(results.last_name),
+  value: results.id
+}));
+
+connection.query('SELECT title, id FROM role', (err, results) => {
+  if (err) throw err;
+  
+  
+  const roleList = results.map(resultsTwo => ({
+    name: resultsTwo.title,
+    value: resultsTwo.id
+  }));
+
+  inquirer.prompt([
+    {
+    type: 'list',
+    message: 'Whose role would you like to update?',
+    name: 'pickedEmployee',
+    choices: empList
+     },
+     {
+    type: 'list',
+    message: 'What is their new role?',
+    name: 'newRole',
+    choices: roleList
+     }])
+  .then((choice) => {
+    connection.query(`UPDATE employee SET role_id= ${choice.newRole} WHERE id = ${choice.pickedEmployee};`)
+console.log("Role has been updated in the Database!")
+    welcomePrompt();
+  })
+})
+})
+};
 
 function viewDepartments(){
   connection.query('SELECT * FROM department', (err, results) => {
@@ -198,3 +232,4 @@ function viewRoles(){
     console.log('|-_-_-_-_-_-_-_-_-_-|')
     console.table(results)})
             welcomePrompt();}
+welcomePrompt();
