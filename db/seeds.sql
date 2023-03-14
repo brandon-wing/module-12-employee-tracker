@@ -12,8 +12,8 @@ VALUES  ("Swamp Expert", 50000, 1),
         ("Defense Lawyer", 80000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES  ("Brandon", "Wing", 1, 2),
-        ("Bob", "Johnson", 2, 1),
+VALUES  ("Brandon", "Wing", 1, NULL),
+        ("Bob", "Johnson", 2, NULL),
         ("Toby", "Keith", 3, 1),
         ("Peter", "Griffin", 4, 2),
-        ("Courtney", "Love", 5, 3);
+        ("Courtney", "Love", 5, 2);

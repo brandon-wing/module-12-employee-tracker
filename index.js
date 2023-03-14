@@ -47,6 +47,7 @@ const connection = mysql.createConnection({
               addDepartment();
                 break;
             case 'Add a role':
+              addRole();
                 break;
             case 'Add an employee':
                 break;
@@ -72,7 +73,20 @@ const connection = mysql.createConnection({
 })}
 
   function addRole(){
-    inquirer.prompt(
+    // query the database to retrieve the data you want to use as choices
+connection.query('SELECT id, name FROM department', (err, results) => {
+  if (err) throw err;
+
+  console.log("Results: ", results);
+  // Have to make the data from the table an object that Inquirer can use
+  const deptChoices = results.map(results => ({
+    name: results.name,
+    value: results.id
+  }));
+
+  //console.log("Dept Choices: ", deptChoices);
+
+    inquirer.prompt([
       {
       type: 'input',
       message: 'What is the title of the role that you would like to add?',
@@ -86,12 +100,18 @@ const connection = mysql.createConnection({
        {
       type: 'list',
       message: 'Which department is this role employed in?',
-      name: 'roleDepartment'
-    })
-    .then((choice) => {(connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${choice.role}, ${choice.roleSalary}, ${choice.roleDepartment}';`))
-    console.log("The role has been added!")
-    welcomePrompt();
-  })};
+      name: 'roleDepartment',
+      choices: deptChoices
+    }])
+    .then((choice) => {
+      console.log("Answer: ", choice)
+      connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${choice.role}', '${choice.roleSalary}', '${choice.roleDepartment}');`)
+      console.log("The role has been added!")
+      welcomePrompt();
+  });
+});
+}
+
 
   function addEmployee() {
   inquirer.prompt({
@@ -114,18 +134,21 @@ const connection = mysql.createConnection({
       message: 'Who is the manager of the employee?',
       name: 'employeeManager'
   })
-  .then((choice) => {(connection.query(`INSERT INTO employee (first_name, last_name, department_id) VALUES ('${choice.firstname}, ${choice.lastname}, ${choice.role}, ${choice.manager}';`))
+  .then((choice) => {connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${choice.role}', ${choice.roleSalary}, ${choice.roleDepartment})`);
   console.log("The employee has been added!")
   welcomePrompt();
 })};
 
+
   function updateRole(){
   inquirer.prompt({
-      type: 'input',
+      type: 'list',
       message: 'Whose role would you like to update?',
       name: 'updateRole'
   })};
 welcomePrompt();
+
+
 function viewDepartments(){
   connection.query('SELECT * FROM department', (err, results) => {
     if (err)
@@ -135,6 +158,8 @@ function viewDepartments(){
             welcomePrompt();}
 
             function viewEmployees(){
+
+
   connection.query('SELECT * FROM employee', (err, results) => {
     if (err)
     throw err;
@@ -142,6 +167,7 @@ function viewDepartments(){
     console.table(results)})
             welcomePrompt();}
 
+            
 function viewRoles(){
   connection.query('SELECT * FROM role', (err, results) => {
     if (err)
