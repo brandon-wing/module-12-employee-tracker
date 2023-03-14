@@ -50,6 +50,7 @@ const connection = mysql.createConnection({
               addRole();
                 break;
             case 'Add an employee':
+              addEmployee();
                 break;
             case 'Update and employee role':
                 break;
@@ -77,7 +78,7 @@ const connection = mysql.createConnection({
 connection.query('SELECT id, name FROM department', (err, results) => {
   if (err) throw err;
 
-  console.log("Results: ", results);
+  // console.log("Results: ", results);
   // Have to make the data from the table an object that Inquirer can use
   const deptChoices = results.map(results => ({
     name: results.name,
@@ -114,30 +115,52 @@ connection.query('SELECT id, name FROM department', (err, results) => {
 
 
   function addEmployee() {
-  inquirer.prompt({
-      type: 'list',
+    connection.query('SELECT title, id FROM role', (err, results) => {
+      if (err) throw err;
+    
+      const roleChoices = results.map(results => ({
+        name: results.title,
+        value: results.id
+      }));
+
+    connection.query('SELECT first_name, last_name, id FROM employee', (err, results) => {
+      if (err) throw err;
+      console.log(results)
+      const managerChoices = results.map(resultsTwo => ({
+        name: resultsTwo.first_name.concat(resultsTwo.last_name),
+        value: resultsTwo.id
+      }));
+ 
+  inquirer.prompt([{
+      type: 'input',
       message: 'What is the first name of the employee?',
-      choices: 'firstname'
+      name: 'firstName'
+  },
+  {
+      type: 'input',
+      message: 'What is the last name of the employee?',
+      name: 'lastName'
   },
   {
       type: 'list',
-      message: 'What is the last name of the employee?',
-      choices: 'lastname'
-  },
-  {
-      type: 'input',
       message: 'What is the role of the employee?',
-      name: 'employeeRole'
+      name: 'employeeRole',
+      choices: roleChoices
   },
   {
-      type: 'input',
+      type: 'list',
       message: 'Who is the manager of the employee?',
-      name: 'employeeManager'
-  })
-  .then((choice) => {connection.query(`INSERT INTO role (title, salary, department_id) VALUES ('${choice.role}', ${choice.roleSalary}, ${choice.roleDepartment})`);
+      name: 'employeeManager',
+      choices: managerChoices
+  }
+])
+  .then((choice) => {connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${choice.firstName}', '${choice.lastName}', '${choice.employeeRole}', '${choice.employeeManager}')`);
   console.log("The employee has been added!")
   welcomePrompt();
-})};
+})
+})
+})
+};
 
 
   function updateRole(){
