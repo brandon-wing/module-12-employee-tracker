@@ -8,7 +8,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
 
-    password: 'Mb0217nt!',
+    password: '',
     database: 'employeetracker_db'
   });
   //Welcome/entry screen with the first set of questions.
@@ -70,7 +70,7 @@ const connection = mysql.createConnection({
 //using DB queries to insert data into the tables
 //for some reason the template literal only works when using backticks, not quotes or single quotes
 .then((choice) => {(connection.query(`INSERT INTO department (name) VALUES ('${choice.department}');`))
-  console.log("The department has been added!")
+  console.log("The department has been added to the Database!")
   welcomePrompt();
 })}
 
