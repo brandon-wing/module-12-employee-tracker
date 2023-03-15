@@ -8,7 +8,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
 
-    password: '',
+    password: 'Mb0217nt!',
     database: 'employeetracker_db'
   });
   //Welcome/entry screen with the first set of questions.
